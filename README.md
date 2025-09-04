@@ -45,3 +45,6 @@ Pins are numbered from bottom up.
 
 4) **Spindle**
 
+    | TB5 pin  |  Name   |  Relay coil  |
+    |:---|:-----|:---|
+    | 17 | OUTPUT8 |  ?  |     
