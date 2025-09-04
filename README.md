@@ -4,11 +4,39 @@ Retrofit of Jaspar 1MVZ milling machine
 
 ## Wiring 
 
+### Conventions
+
+Convention for terminal blocks : 
+
+| Designation  |  Useful name  |
+|:---|:-----|
+| 24v+ | 24V+ |
+| 24vgnd | 0V |
+| 230v phase | P |
+| 230v neutral | N |
+| Coils | C |
+
+
+
+
+
 ### Mesa 7i76e wiring
 
 ![alt text](<7i76e/Screenshot From 2025-09-04 05-09-42.png>)
 
 Pins are numbered from bottom up.
+
+0) **Power**
+
+    | TB1 pin  |  Name   | Terminal block |
+    |:---|:-----|:---|
+    | 5 | VIN |  24V+  |     
+    | 8 | GROUND |  0V  |     
+
+    | TB3 pin  |  Name   | Terminal block |
+    |:---|:-----|:---|
+    | 22 | UNREG LOGIC PWR+ IN |  24V+  |     
+    | 23 | GND |  0V  |    
 
 1) **x Axis** 
 
@@ -47,4 +75,4 @@ Pins are numbered from bottom up.
 
     | TB5 pin  |  Name   |  Relay coil  |
     |:---|:-----|:---|
-    | 17 | OUTPUT8 |  ?  |     
+    | 17 | OUTPUT8 |  C1  |     
