@@ -4,19 +4,23 @@ Retrofit of Jaspar 1MVZ milling machine
 
 ## Wiring 
 
+### Operating principles
+
+
+
 ### Conventions
 
-Convention for terminal blocks : 
+Convention for terminal blocks, where `X` is any number : 
 
 | Designation  |  Useful name  |
 |:---|:-----|
-| 24v+ | 24V+ |
-| 24vgnd | 0V |
+| 24v + | 24V+ |
+| 24v gnd | 0V |
 | 230v phase | P |
 | 230v neutral | N |
-| Coils | C |
-
-
+| Coils | K`X` |
+| Contact | K`X`.`X` |
+| Switch | S |
 
 
 
@@ -76,3 +80,17 @@ Pins are numbered from bottom up.
     | TB5 pin  |  Name   |  Relay coil  |
     |:---|:-----|:---|
     | 17 | OUTPUT8 |  C1  |     
+
+5) **MPG**
+
+    | TB3 pin  |  Name   | MPG contact |
+    |:---|:-----| :--- |
+    | 9 | GND | VCC |
+    | 12 | +5VP | GND |
+
+    | TB5 pin  |  Name   | MPG contact |
+    |:---|:-----| :--- |
+    | 1 |  | A+ |
+    | / |  | A- |
+    | 2 |  | B+ |
+    | / |  | B- |
