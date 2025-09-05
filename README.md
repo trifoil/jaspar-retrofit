@@ -2,6 +2,12 @@
 Retrofit of Jaspar 1MVZ milling machine
 
 
+## Components
+
+| Designation  |  Useful name  |
+|:---|:-----|
+|  |  |
+
 ## Wiring 
 
 ### Operating principles
@@ -106,7 +112,44 @@ Pins are numbered from bottom up.
 
     | TB5 pin  |  Name   | MPG contact |
     |:---|:-----| :--- |
-    | 1 |  | A+ |
-    | / |  | A- |
-    | 2 |  | B+ |
-    | / |  | B- |
+    | 1 | INPUT16 | A+ |
+    | / | / | A- |
+    | 2 | INPUT17 | B+ |
+    | / | / | B- |
+
+6) **Estop**
+
+    | TB5 pin  |  Name   |
+    |:---|:-----|
+    | 3 | INPUT18 |
+
+7) **Speed selector button**
+
+    | TB5 pin  |  Name   |  Position  |
+    |:---|:-----|:---|
+    | 4 | INPUT19 | X1 |
+    | 5 | INPUT20 | X10 |
+    | 6 | INPUT21 | X100 |
+
+8) **Axis selector button**
+
+    | TB5 pin  |  Name   |  Position  |
+    |:---|:-----|:---|
+    | 7 | INPUT22 | X |
+    | 8 | INPUT23 | Y |
+    | 9 | INPUT24 | Z |
+
+9) **Program start**
+
+    | TB5 pin  |  Name   |  
+    |:---|:-----|
+    | 10 | INPUT25 | 
+
+
+10) **Program pause**
+
+    | TB5 pin  |  Name   |
+    |:---|:-----|
+    | 11 | INPUT26 |
+
+11) 
