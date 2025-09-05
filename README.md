@@ -24,7 +24,21 @@ Convention for terminal blocks, where `X` is any number :
 | Contact | K`X`.`X` |
 | Switch | S |
 
+### Mesa 7i76e jumpers
 
+W2 and W3 are down, so the address of the card is 192.168.1.121 (default)
+
+```sh
+x@fedora:~$ ping 192.168.1.121
+```
+
+The answer should be : 
+```txt
+PING 192.168.1.121 (192.168.1.121) 56(84) bytes of data.
+64 bytes from 192.168.1.121: icmp_seq=1 ttl=64 time=0.091 ms
+64 bytes from 192.168.1.121: icmp_seq=2 ttl=64 time=0.109 ms
+64 bytes from 192.168.1.121: icmp_seq=3 ttl=64 time=0.121 ms
+```
 
 ### Mesa 7i76e wiring
 
