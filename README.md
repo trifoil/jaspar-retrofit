@@ -12,7 +12,7 @@ Retrofit of Jaspar 1MVZ milling machine
 
 ### Operating principles
 
-Once the main switch is turned on, the power is on for the computer, 24V alims and 
+Once the main switch is turned on, the power is on for the computer, 24V alims and ...
 
 
 
