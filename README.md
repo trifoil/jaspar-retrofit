@@ -128,16 +128,20 @@ Pins are numbered from bottom up.
     | TB5 pin  |  Name   |  Position  |
     |:---|:-----|:---|
     | 4 | INPUT19 | X1 |
-    | 5 | INPUT20 | X10 |
-    | 6 | INPUT21 | X100 |
+    | 5 | INPUT20 | X100 |
+
+    If none is selected, the speed is X10
 
 8) **Axis selector button**
 
     | TB5 pin  |  Name   |  Position  |
     |:---|:-----|:---|
-    | 7 | INPUT22 | X |
-    | 8 | INPUT23 | Y |
-    | 9 | INPUT24 | Z |
+    | 6 | INPUT21 | X |
+    | 7 | INPUT22 | Z |
+
+
+    If none is selected, the axis is Y
+
 
 9) **Program start**
 
