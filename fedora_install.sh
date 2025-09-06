@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Install boost-python3 and other required dependencies
+sudo dnf install boost-python3 redhat-lsb-core python3.12 -y
+
+# Install development tools that might be needed
+sudo dnf groupinstall "Development Tools" -y
+
+
+
+
+
+
+
 echo '[main]
 max_parallel_downloads=50' | sudo tee -a /etc/dnf/dnf.conf
 
@@ -21,8 +33,8 @@ sudo wget -O /etc/yum.repos.d/rt.repo https://dwrobel.fedorapeople.org/tmp/linux
 sudo dnf install https://mirror.karneval.cz/pub/linux/centos-stream/9-stream/BaseOS/x86_64/os/Packages/centos-gpg-keys-9.0-23.el9.noarch.rpm -y
 
 # Install linuxcnc
-sudo dnf install linuxcnc-uspace -y
-
+# Try installing with more flexible dependency resolution
+sudo dnf install --allowerasing linuxcnc-uspace -y
 # Add user to realtime group
 sudo usermod -a -G realtime $(whoami)
 
