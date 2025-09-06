@@ -139,7 +139,6 @@ Pins are numbered from bottom up.
     | 6 | INPUT21 | X |
     | 7 | INPUT22 | Z |
 
-
     If none is selected, the axis is Y
 
 
