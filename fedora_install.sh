@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo '[main]
-max_parallel_downloads=10' | sudo tee -a /etc/dnf/dnf.conf
+max_parallel_downloads=50' | sudo tee -a /etc/dnf/dnf.conf
 
 # Update system
 dnf update -y
