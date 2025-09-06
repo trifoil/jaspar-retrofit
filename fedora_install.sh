@@ -4,7 +4,7 @@
 dnf update -y
 
 # Remove unnecessary packages
-dnf remove firefox gnome-weather gnome-clocks gnome-contacts cheese gnome-tour gnome-music gnome-calendar yelp xsane totem snapshot firefox epiphany libreoffice-impress libreoffice-writer libreoffice-calc -y
+dnf remove firefox gnome-weather gnome-clocks gnome-contacts cheese gnome-tour gnome-music gnome-calendar yelp xsane totem snapshot epiphany libreoffice-impress libreoffice-writer libreoffice-calc -y
 
 # Install required packages and enable repos
 sudo dnf install dnf-plugins-core -y
