@@ -236,8 +236,22 @@ net machine-is-enabled        <=  motion.motion-enabled
 
 #  ---estop signals---
 
-net estop-out     <=  iocontrol.0.user-enable-out
-net estop-out     =>  iocontrol.0.emc-enable-in
+# --- Physical E-stop on INPUT18 ---
+# Normally closed: 1 = OK, 0 = E-stop pressed
+
+# bring in physical input
+net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-18
+
+# invert because NC switch: 0=OK, 1=E-stop
+
+addf not.0 servo-thread
+net estop-in     => not.0.in
+net estop-fault  <= not.0.out
+
+# connect to LinuxCNC estop
+# estop-fault triggers software estop
+net estop-fault    => iocontrol.0.emc-enable-in
+
 
 #  ---manual tool change signals---
 
@@ -255,21 +269,3 @@ net tool-number            =>  hal_manualtoolchange.number
 #  ---ignore tool prepare requests---
 net tool-prepare-loopback   iocontrol.0.tool-prepare      =>  iocontrol.0.tool-prepared
 
-
-
-# --- Physical E-stop on INPUT18 ---
-# Normally closed: 1 = OK, 0 = E-stop pressed
-
-# bring in physical input
-net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-18
-
-# invert because NC switch: 0=OK, 1=E-stop
-loadrt not
-addf not.0 servo-thread
-net estop-in     => not.0.in
-net estop-fault  <= not.0.out
-
-# connect to LinuxCNC estop
-# estop-in (OK) resets estop, estop-fault triggers estop
-net estop-fault    => iocontrol.0.emc-enable-in
-net estop-in       => iocontrol.0.user-request-enable
