@@ -78,3 +78,36 @@ How it works:
     * E-Stop IS pressed (circuit open): in-18 is FALSE -> not.out is TRUE
 
 * This inverted signal (estop-active) is then connected to iocontrol.0.emc-enable-in. This pin expects TRUE to enable the machine and FALSE to disable it. Our logic now correctly disables the machine when the E-Stop is pressed.
+
+
+
+## NOT
+
+Right now your E-Stop is wired as normally closed (NC), so you’re inverting the signal with not.0.
+If you’re changing it to normally open (NO) — meaning 1 = pressed / fault, 0 = OK — then you no longer need the not component.
+
+Here’s how you can modify your HAL file:
+
+Remove these lines:
+
+loadrt not
+addf not.0 servo-thread
+net estop-in     => not.0.in
+net estop-fault  <= not.0.out
+net estop-fault    => iocontrol.0.emc-enable-in
+
+Replace with a direct connection:
+# --- Physical E-stop on INPUT18 ---
+# Normally open: 0 = OK, 1 = E-stop pressed
+
+net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-18
+net estop-in    =>  iocontrol.0.emc-enable-in
+This way, the signal from your Mesa input goes directly to LinuxCNC’s iocontrol.0.emc-enable-in, no inversion needed.
+
+⚠️ Before running the machine, test with halmeter or halscope:
+
+E-Stop released → signal = 0 (OK)
+
+E-Stop pressed → signal = 1 (Triggers E-Stop)
+
+Do you also want me to adjust comments in the HAL file so it’s clear it’s now NO wiring instead of NC?
