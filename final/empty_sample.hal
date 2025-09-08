@@ -250,10 +250,11 @@ net estop-in    =>  iocontrol.0.emc-enable-in
 
 net estop-in     <= hm2_7i76e.0.7i76.0.0.input-27
 
-# Invert only for machine enable
+# Invert for machine enable
 net estop-enable <= not.0.out
 net estop-in     => not.0.in
 net estop-enable => iocontrol.0.emc-enable-in
+
 
 
 #  ---manual tool change signals---
