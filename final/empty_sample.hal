@@ -264,7 +264,7 @@ net tool-prepare-loopback   iocontrol.0.tool-prepare      =>  iocontrol.0.tool-p
 loadrt encoder num_chan=1
 loadrt mux4 count=1
 addf encoder.capture-position servo-thread
-addf encoder.update-counters servo-thread  # Using servo-thread instead of base-thread
+addf encoder.update-counters servo-thread
 addf mux4.0 servo-thread
 
 # MPG encoder configuration
@@ -281,15 +281,14 @@ setp mux4.0.in1 0.01     # Medium scale
 setp mux4.0.in2 0.001    # Fine scale
 setp mux4.0.in3 0.0001   # Extra fine scale
 
-# MPG encoder inputs (from TB5)
-net mpg-a encoder.0.phase-A <= hm2_7i76e.0.7i76.0.0.input-16  # A+ on INPUT16
-net mpg-b encoder.0.phase-B <= hm2_7i76e.0.7i76.0.0.input-17  # B+ on INPUT17
+# MPG encoder inputs (from TB5) - CORRECTED PIN NAMES
+net mpg-a encoder.0.phase-A <= hm2_7i76e.0.7i76.0.0.0.input-16  # A+ on INPUT16
+net mpg-b encoder.0.phase-B <= hm2_7i76e.0.7i76.0.0.0.input-17  # B+ on INPUT17
 
-# Jog enable button (from TB5)
-net mpg-enable-btn <= hm2_7i76e.0.7i76.0.0.input-20  # INPUT20
+# Jog enable button (from TB5) - CORRECTED PIN NAME
+net mpg-enable-btn <= hm2_7i76e.0.7i76.0.0.0.input-20  # INPUT20
 
 # Create axis select signals (you'll need to add physical switches for these)
-# For manual testing, you can set them directly:
 setp axis.x.jog-enable 0
 setp axis.y.jog-enable 0  
 setp axis.z.jog-enable 0
@@ -307,8 +306,8 @@ net mpg-scale => axis.y.jog-scale
 net mpg-scale => axis.z.jog-scale
 
 # Enable jogging only when the MPG enable button is pressed
-# Using the existing NOT component (assuming not.0 is available)
-net mpg-enable-active not.0.in <= mpg-enable-btn
+# Using the existing NOT component
+net mpg-enable-active not.in0 <= mpg-enable-btn
 net mpg-enable-active => axis.x.jog-enable
 net mpg-enable-active => axis.y.jog-enable
 net mpg-enable-active => axis.z.jog-enable
@@ -318,10 +317,10 @@ setp mux4.0.sel0 0
 setp mux4.0.sel1 0
 
 # Example: If you add scale select switches later:
-# net scale-sel0 mux4.0.sel0 <= hm2_7i76e.0.7i76.0.0.input-xx
-# net scale-sel1 mux4.0.sel1 <= hm2_7i76e.0.7i76.0.0.input-xx
+# net scale-sel0 mux4.0.sel0 <= hm2_7i76e.0.7i76.0.0.0.input-xx
+# net scale-sel1 mux4.0.sel1 <= hm2_7i76e.0.7i76.0.0.0.input-xx
 
 # Example: If you add axis select switches later:
-# net x-select axis.x.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx
-# net y-select axis.y.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx  
-# net z-select axis.z.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx
+# net x-select axis.x.jog-enable <= hm2_7i76e.0.7i76.0.0.0.input-xx
+# net y-select axis.y.jog-enable <= hm2_7i76e.0.7i76.0.0.0.input-xx  
+# net z-select axis.z.jog-enable <= hm2_7i76e.0.7i76.0.0.0.input-xx
