@@ -316,9 +316,10 @@ net not-sel-x           =>  and2.2.in1
 
 # --- connect to halui axis selection (optional, keeps GUI selection in sync) ---
 # Replace your existing bare nets so they carry our signals too:
-net axis-select-x       sel-x    =>  halui.axis.x.select
-net axis-select-y       sel-y    =>  halui.axis.y.select
-net axis-select-z       sel-z    =>  halui.axis.z.select
+net sel-x     => halui.axis.x.select
+net sel-y     => halui.axis.y.select
+net sel-z     => halui.axis.z.select
+
 
 # --- MPG encoder counts (TB3-16 A, TB3-17 B -> enc0) ---
 net mpg-counts          <=  hm2_7i76e.0.7i76.0.0.enc0.count
