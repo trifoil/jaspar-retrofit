@@ -9,7 +9,7 @@ loadrt hostmot2
 loadrt hm2_eth board_ip="192.168.1.121" config="num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=00xxxxxx" 
 setp    hm2_7i76e.0.watchdog.timeout_ns 5000000
 loadrt pid names=pid.x,pid.y,pid.z,pid.s
-loadrt not
+loadrt not count=2
 
 addf hm2_7i76e.0.read          servo-thread
 addf motion-command-handler   servo-thread
@@ -258,13 +258,13 @@ net tool-number            =>  hal_manualtoolchange.number
 #  ---ignore tool prepare requests---
 net tool-prepare-loopback   iocontrol.0.tool-prepare      =>  iocontrol.0.tool-prepared
 
-
+########################################################################################
 
 # Jog MPG - Add to your existing HAL file
 loadrt encoder num_chan=1
 loadrt mux4 count=1
 addf encoder.capture-position servo-thread
-addf encoder.update-counters servo-thread  # Changed from base-thread to servo-thread
+addf encoder.update-counters servo-thread  # Using servo-thread instead of base-thread
 addf mux4.0 servo-thread
 
 # MPG encoder configuration
@@ -307,9 +307,7 @@ net mpg-scale => axis.y.jog-scale
 net mpg-scale => axis.z.jog-scale
 
 # Enable jogging only when the MPG enable button is pressed
-# Using NOT component since button is likely active low (pressed = 0, released = 1)
-loadrt not count=1
-addf not.0 servo-thread
+# Using the existing NOT component (assuming not.0 is available)
 net mpg-enable-active not.0.in <= mpg-enable-btn
 net mpg-enable-active => axis.x.jog-enable
 net mpg-enable-active => axis.y.jog-enable
