@@ -159,6 +159,7 @@ Pins are numbered from bottom up.
     | 12 | +5VP | GND |
 
     | TB5 pin  |  Name   | MPG contact |
+    |:---|:-----| :--- |
     | 1 | INPUT16 | A+ |
     | / | / | A- |
     | 2 | INPUT17 | B+ |
@@ -166,9 +167,9 @@ Pins are numbered from bottom up.
 
 6) **Jog enabling button**
 
-    | TB5 pin  |  Name   |
-    |:---|:-----|
-    | 5 | INPUT20 |
+    | TB5 pin  |  Name   | HAL name |
+    |:---|:-----|:---|
+    | 5 | INPUT20 | hm2_7i76e.0.7i76.0.0.input-20 |
 
 7) **Speed selector button**
 
