@@ -240,24 +240,10 @@ net machine-is-enabled        <=  motion.motion-enabled
 # Normally open: 0 = OK, 1 = E-stop pressed
 
 net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
-net estop-in    =>  iocontrol.0.emc-enable-in
 
+net estop-in    =>  not.0.in
 
-# ---estop signals---
-
-# --- Physical E-stop on INPUT27 ---
-# Normally open: 0 = OK, 1 = E-stop pressed
-
-# Raw input from hardware
-net estop-in     <= hm2_7i76e.0.7i76.0.0.input-27
-
-# Invert for machine enable
-net estop-enable <= not.0.out
-net estop-in     => not.0.in
-net estop-enable => iocontrol.0.emc-enable-in
-
-
-
+net estop-inverted not.0.out => iocontrol.0.emc-enable-in
 
 #  ---manual tool change signals---
 
