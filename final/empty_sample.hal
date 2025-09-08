@@ -13,7 +13,7 @@ loadrt pid names=pid.x,pid.y,pid.z,pid.s
 
 # --- small logic modules (load once) ---
 loadrt mux4  count=1
-loadrt or2   count=1
+loadrt or2   count=4
 # we need 5 and2 instances (0..4)
 loadrt and2  count=8
 # 3 not gates (0..2)
@@ -32,6 +32,9 @@ addf hm2_7i76e.0.write         servo-thread
 # --- schedule logic modules in servo thread ---
 addf mux4.0   servo-thread
 addf or2.0    servo-thread
+addf or2.1    servo-thread
+addf or2.2    servo-thread
+addf or2.3    servo-thread
 addf not.0    servo-thread
 addf not.1    servo-thread
 addf not.2    servo-thread
@@ -165,7 +168,7 @@ setp   pid.z.maxerror 0.012700
 
 net z-index-enable  =>  pid.z.index-enable
 net z-enable        =>  pid.z.enable
-net z-pos-cmd       =>  pid.z.command
+net z-pos-ccmd       =>  pid.z.command
 net z-pos-fb        =>  pid.z.feedback
 net z-output        <=  pid.z.output
 
@@ -271,90 +274,69 @@ net tool-prepare-loopback   iocontrol.0.tool-prepare      =>  iocontrol.0.tool-p
 # === MPG (Handwheel) ===
 # =========================
 
-# Jog enable (must be held)
-net jog-override        <=  hm2_7i76e.0.7i76.0.0.input-20     # TB5-5
-
-# Speed selector: X1 / X100, none => X10
-net speed-x1            <=  hm2_7i76e.0.7i76.0.0.input-21     # TB5-6 (INPUT21)
-net speed-x100          <=  hm2_7i76e.0.7i76.0.0.input-22     # TB5-7 (INPUT22)
-
-# Axis selector: X / Z, none => Y
-net sel-x-raw           <=  hm2_7i76e.0.7i76.0.0.input-23     # TB5-8  (INPUT23 -> X)
-net sel-z-raw           <=  hm2_7i76e.0.7i76.0.0.input-24     # TB5-9  (INPUT24 -> Z)
-
-# Clean, mutually-exclusive selects (use not/or/and modules)
-net sel-x-raw           =>  not.1.in
-net sel-z-raw           =>  not.2.in
-net sel-x-raw           =>  or2.0.in0
-net sel-z-raw           =>  or2.0.in1
-
-# Y = neither X nor Z
-net x-or-z              <=  or2.0.out
-net x-or-z              =>  not.0.in
-
-# not-sel-x / not-sel-z
-net not-sel-x           <=  not.1.out
-net not-sel-z           <=  not.2.out
-
-# Only-one-active outputs
-# and2.0: X & !Z  => sel-x
-net sel-x               <=  and2.0.out
-net sel-x-raw           =>  and2.0.in0
-net not-sel-z           =>  and2.0.in1
-
-# and2.2: Z & !X  => sel-z
-net sel-z               <=  and2.2.out
-net sel-z-raw           =>  and2.2.in0
-net not-sel-x           <=  not.1.out
-net not-sel-x           =>  and2.2.in1
-
-# Y is neither X nor Z: not(x-or-z) -> sel-y
-net sel-y               <=  not.0.out
-
-# Gate jog-enable with override and the selected axis
-# and2.1: jog-override & sel-x  -> x-jog-enable
-net x-jog-enable        <=  and2.1.out
-net jog-override        =>  and2.1.in0
-net sel-x               =>  and2.1.in1
-net x-jog-enable        =>  axis.x.jog-enable
-
-# and2.3: jog-override & sel-y -> y-jog-enable
-net y-jog-enable        <=  and2.3.out
-net jog-override        =>  and2.3.in0
-net sel-y               =>  and2.3.in1
-net y-jog-enable        =>  axis.y.jog-enable
-
-# and2.4: jog-override & sel-z -> z-jog-enable
-net z-jog-enable        <=  and2.4.out
-net jog-override        =>  and2.4.in0
-net sel-z               =>  and2.4.in1
-net z-jog-enable        =>  axis.z.jog-enable
-
-# MPG encoder counts (TB3-16 A, TB3-17 B -> enc0)
-net mpg-counts          <=  hm2_7i76e.0.7i76.0.0.enc0.count
-net mpg-counts          =>  axis.x.jog-counts
-net mpg-counts          =>  axis.y.jog-counts
-net mpg-counts          =>  axis.z.jog-counts
-
-# Jog mode: use counts (not velocity)
+# Set jog mode to position mode (not velocity mode)
 setp axis.x.jog-vel-mode 0
 setp axis.y.jog-vel-mode 0
 setp axis.z.jog-vel-mode 0
 
-# Speed scale mux mapping (00->X10, 01->X1, 10->X100, 11->X10)
-setp mux4.0.in0  10.0    # 00 -> X10  (default)
-setp mux4.0.in1   1.0    # 01 -> X1
-setp mux4.0.in2 100.0    # 10 -> X100
-setp mux4.0.in3  10.0    # 11 -> fall back to X10
+# MPG encoder counts (direct from HostMot2 encoder)
+net mpg-counts <= hm2_7i76e.0.7i76.0.0.enc0.count
+net mpg-counts => axis.x.jog-counts
+net mpg-counts => axis.y.jog-counts
+net mpg-counts => axis.z.jog-counts
 
-net speed-x1            =>  mux4.0.sel0
-net speed-x100          =>  mux4.0.sel1
+# Speed selector inputs (matches your working example)
+net mux-in1 or2.3.in0 <= hm2_7i76e.0.7i76.0.0.input-22 => mux4.0.sel0  # TB5-7 (X100)
+net mux-in2 or2.3.in1 <= hm2_7i76e.0.7i76.0.0.input-21 => mux4.0.sel1  # TB5-6 (X1)
 
-net mpg-scale           <=  mux4.0.out
-net mpg-scale           =>  axis.x.jog-scale
-net mpg-scale           =>  axis.y.jog-scale
-net mpg-scale           =>  axis.z.jog-scale
+# Jog scale settings (matches your working example)
+setp mux4.0.in0 0.0    # 00: disabled
+setp mux4.0.in1 1.0    # 01: 1.0 mm/click
+setp mux4.0.in2 0.1    # 10: 0.1 mm/click  
+setp mux4.0.in3 0.01   # 11: 0.01 mm/click
+
+# MPG scale output to all axes
+net mpg-scale <= mux4.0.out
+net mpg-scale => axis.x.jog-scale
+net mpg-scale => axis.y.jog-scale
+net mpg-scale => axis.z.jog-scale
+
+# Jog enable logic - use OR gate to enable jog when ANY scale is selected (not position 0)
+net jog-enable <= or2.3.out
+
+# Axis selection
+net x-select <= hm2_7i76e.0.7i76.0.0.input-23  # TB5-8 (X axis select)
+net z-select <= hm2_7i76e.0.7i76.0.0.input-24  # TB5-9 (Z axis select)
+
+# If neither X nor Z is selected, default to Y axis
+net y-select <= not.0.out
+net x-select => not.1.in
+net z-select => not.2.in
+net x-select => or2.0.in0
+net z-select => or2.0.in1
+net x-or-z <= or2.0.out
+net x-or-z => not.0.in
+
+# Jog override (must be held) + axis selection
+net x-jog-enable <= and2.1.out
+net jog-override => and2.1.in0
+net x-select => and2.1.in1
+net x-jog-enable => axis.x.jog-enable
+
+net y-jog-enable <= and2.3.out  
+net jog-override => and2.3.in0
+net y-select => and2.3.in1
+net y-jog-enable => axis.y.jog-enable
+
+net z-jog-enable <= and2.4.out
+net jog-override => and2.4.in0
+net z-select => and2.4.in1
+net z-jog-enable => axis.z.jog-enable
+
+# Jog override button
+net jog-override <= hm2_7i76e.0.7i76.0.0.input-20  # TB5-5
 
 # =========================
 # End of HAL configuration
 # =========================
+
