@@ -151,15 +151,17 @@ Pins are numbered from bottom up.
     |:---|:-----|:---|
     | 17 | OUTPUT8 |  C1  |     
 
-5) **Jog MPG**
+5) **Jog MPG** (hm2_7i76e.0.7i76.0.0.enc0.count)
 
     | TB3 pin  |  Name   | MPG contact |
     |:---|:-----| :--- |
     | 9 | GND | VCC |
     | 12 | +5VP | GND |
-    | 16 | | A+ |
+
+    | TB5 pin  |  Name   | MPG contact |
+    | 1 | INPUT16 | A+ |
     | / | / | A- |
-    | 17 |  | B+ |
+    | 2 | INPUT17 | B+ |
     | / | / | B- |
 
 6) **Jog enabling button**
