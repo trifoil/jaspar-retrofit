@@ -19,12 +19,46 @@ Retrofit of Jaspar 1MVZ milling machine
 
 ### Operating principles
 
+
 Once the main switch is turned on, the power is on for the computer, 24V alims and 
+
+---
+
+**Estop**
 
 The E-stop has two contacts
 
 * ZBE102 (red), Normally Closed, wired to a Mesa input     
 * ZBE102 (red), Normally Closed, wired to the main safety relay     
+
+When pressed, the circuit is open, as if there was no wire (that way if the estop wire is disconnected, the machine won't start):
+* Software Estop is enabled
+* The machine is on
+* The relay is disabled, and the power contactors (X, Y, Z and Spindle) are open.
+If the E-stop is disengaged, the circuit is closed and :
+* Software Estop is disabled
+* The machine is off
+* The relay is enabled, and the power contactors (X, Y, Z and Spindle) are closed.
+
+---
+
+**Jog mode**
+
+The MPG encoder is powered by 5V, linked to GND, and has 4 outputs : A+, B+, A-, B-.
+
+These inputs are used in quadrature.
+
+To override the normal operation of the machine one button is pressed, and enables the jog wheel while pressed.
+
+Two selector buttons allow for selecting :
+
+* The axis to move
+* The speed at which it is moving : 
+    * X1
+    * X10
+    * X100
+
+---
 
 
 
