@@ -159,13 +159,10 @@ Pins are numbered from bottom up.
     |:---|:-----| :--- |
     | 9 | GND | VCC |
     | 12 | +5VP | GND |
-
-    | TB5 pin  |  Name   | MPG contact |
-    |:---|:-----| :--- |
-    | 1 | INPUT16 | A+ |
-    | 2 | INPUT17 | A- |
-    | 3 | INPUT18 | B+ |
-    | 4 | INPUT19 | B- |
+    |  | | A+ |
+    | / | / | A- |
+    | |  | B+ |
+    | / | / | B- |
 
 6) **Jog enabling button**
 
