@@ -159,9 +159,9 @@ Pins are numbered from bottom up.
     |:---|:-----| :--- |
     | 9 | GND | VCC |
     | 12 | +5VP | GND |
-    |  | | A+ |
+    | 16 | | A+ |
     | / | / | A- |
-    | |  | B+ |
+    | 17 |  | B+ |
     | / | / | B- |
 
 6) **Jog enabling button**
