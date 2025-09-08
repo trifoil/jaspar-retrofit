@@ -45,9 +45,7 @@ If the E-stop is disengaged, the circuit is closed and :
 
 **Jog mode**
 
-The MPG encoder is powered by 5V, linked to GND, and has 4 outputs : A+, B+, A-, B-.
-
-These inputs are used in quadrature.
+The MPG encoder is powered by 5V, linked to GND, and has 4 outputs but two are used : A+ and B+.
 
 To override the normal operation of the machine one button is pressed, and enables the jog wheel while pressed.
 
