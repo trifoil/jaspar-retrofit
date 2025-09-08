@@ -4,15 +4,27 @@ Retrofit of Jaspar 1MVZ milling machine
 
 ## Components
 
-| Designation  |  Useful name  |
-|:---|:-----|
-|  |  |
+| Quantity | Brand | Designation  |  Useful name  | Additional comments |
+|:---|:---|:---|:-----|:-----|
+|1| Schneider Electric | XB5AA25 |  Push button, Black |/|
+|1| Schneider Electric | XB5AA15 |  Push button, White |/|
+|1| Schneider Electric | XB5AA61 |  Push button, Blue |/|
+|1| Schneider Electric | XB5AA55 |  Push button, Yellow |/|
+|2| Schneider Electric | XB5AD33 | Selector switch | / |
+|1| Schneider Electric | XB5PUSB3 |  Panel mounted USB 3.0 port | / |
+
+
 
 ## Wiring 
 
 ### Operating principles
 
-Once the main switch is turned on, the power is on for the computer, 24V alims and ...
+Once the main switch is turned on, the power is on for the computer, 24V alims and 
+
+The E-stop has two contacts
+
+* ZBE102 (red), Normally Closed, wired to a Mesa input     
+* ZBE102 (red), Normally Closed, wired to the main safety relay     
 
 
 
