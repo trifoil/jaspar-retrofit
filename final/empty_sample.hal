@@ -9,7 +9,7 @@ loadrt hostmot2
 loadrt hm2_eth board_ip="192.168.1.121" config="num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=00xxxxxx" 
 setp    hm2_7i76e.0.watchdog.timeout_ns 5000000
 loadrt pid names=pid.x,pid.y,pid.z,pid.s
-loadrt not
+loadrt not count=1
 
 addf hm2_7i76e.0.read          servo-thread
 addf motion-command-handler   servo-thread
@@ -239,10 +239,11 @@ net machine-is-enabled        <=  motion.motion-enabled
 # --- Physical E-stop on INPUT27 ---
 # Normally open: 0 = OK, 1 = E-stop pressed
 
+addf not.0 servo-thread
+
 net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
 
 net estop-in    =>  not.0.in
-
 net estop-inverted not.0.out => iocontrol.0.emc-enable-in
 
 #  ---manual tool change signals---
