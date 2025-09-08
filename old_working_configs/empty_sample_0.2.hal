@@ -236,7 +236,7 @@ net machine-is-enabled        <=  motion.motion-enabled
 
 #  ---estop signals---
 
-# --- Physical E-stop on INPUT18 ---
+# --- Physical E-stop on INPUT27 ---
 # Normally open: 0 = OK, 1 = E-stop pressed
 
 net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
