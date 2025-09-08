@@ -12,6 +12,7 @@ Retrofit of Jaspar 1MVZ milling machine
 |1| Schneider Electric | XB5AA55 |  Push button, Yellow |/|
 |2| Schneider Electric | XB5AD33 | Selector switch | / |
 |1| Schneider Electric | XB5PUSB3 |  Panel mounted USB 3.0 port | / |
+|1| Schneider Electric | XB5AVB4 | Pilot light | / |
 
 
 
