@@ -52,7 +52,10 @@ To override the normal operation of the machine one button is pressed, and enabl
 
 Two selector buttons allow for selecting :
 
-* The axis to move
+* The axis to move :
+    * X
+    * Y
+    * Z
 * The speed at which it is moving : 
     * X1
     * X10
@@ -149,7 +152,7 @@ Pins are numbered from bottom up.
     |:---|:-----|:---|
     | 17 | OUTPUT8 |  C1  |     
 
-5) **MPG**
+5) **Jog MPG**
 
     | TB3 pin  |  Name   | MPG contact |
     |:---|:-----| :--- |
@@ -159,22 +162,22 @@ Pins are numbered from bottom up.
     | TB5 pin  |  Name   | MPG contact |
     |:---|:-----| :--- |
     | 1 | INPUT16 | A+ |
-    | / | / | A- |
-    | 2 | INPUT17 | B+ |
-    | / | / | B- |
+    | 2 | INPUT17 | A- |
+    | 3 | INPUT18 | B+ |
+    | 4 | INPUT19 | B- |
 
-6) **Estop**
+6) **Jog enabling button**
 
     | TB5 pin  |  Name   |
     |:---|:-----|
-    | 3 | INPUT18 |
+    | 5 | INPUT20 |
 
 7) **Speed selector button**
 
     | TB5 pin  |  Name   |  Position  |
     |:---|:-----|:---|
-    | 4 | INPUT19 | X1 |
-    | 5 | INPUT20 | X100 |
+    | 6 | INPUT21 | X1 |
+    | 7 | INPUT22 | X100 |
 
     If none is selected, the speed is X10
 
@@ -182,11 +185,10 @@ Pins are numbered from bottom up.
 
     | TB5 pin  |  Name   |  Position  |
     |:---|:-----|:---|
-    | 6 | INPUT21 | X |
-    | 7 | INPUT22 | Z |
+    | 8 | INPUT23 | X |
+    | 9 | INPUT24 | Z |
 
     If none is selected, the axis is Y
-
 
 9) **Program start**
 
@@ -201,4 +203,37 @@ Pins are numbered from bottom up.
     |:---|:-----|
     | 11 | INPUT26 |
 
-11) 
+11) **Estop**
+
+    | TB5 pin  |  Name   |
+    |:---|:-----|
+    | 12 | INPUT27 |
+
+12) **Coolant**
+
+    | TB5 pin  |  Name   |
+    |:---|:-----|
+    | 13 | INPUT28 |
+
+13) **Limit switches**
+
+    | TB6 pin  |  Name   | Axis |
+    |:---|:-----|:---|
+    | 1 | INPUT0 | X |
+    | 2 | INPUT1 | Y |
+    | 3 | INPUT2 | Z |
+
+14) **Homing sensor**
+
+    | TB6 pin  |  Name   | Axis |
+    |:---|:-----|:---|
+    | 4 | INPUT3 | X |
+    | 5 | INPUT4 | Y |
+    | 6 | INPUT5 | Z |
+
+15) **Z axis brake**
+
+    | TB5 pin  |  Name   |
+    |:---|:-----|
+    | 18 | OUTPUT9 |
+

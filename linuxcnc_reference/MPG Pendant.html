@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.2.1" />
+<title>MPG Pendant</title>
+<link rel="stylesheet" href="..//asciidoc.css" type="text/css" />
+
+
+<link rel="stylesheet" href="..//linuxcnc.css" type="text/css" />
+<script type="text/javascript" src="..//asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+</head>
+<body class="book">
+<div id="header">
+<h1>MPG Pendant</h1>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph" id="cha:mpg-pendant"><p>This example is to explain how to hook up the common MPG pendants
+found on the market today. This example uses an MPG3 pendant and a
+C22 pendant interface card from CNC4PC connected to a second parallel
+port plugged into the PCI slot. This example gives you 3 axes with 3
+step increments of 0.1, 0.01, 0.001</p></div>
+<div class="paragraph"><p>In your custom.hal file or jog.hal file add the following, making
+sure you don&#8217;t have mux4 or an encoder already in use. If you do just
+increase the counts and change the reference numbers. More information
+about mux4 and encoder can be found in the HAL manual or the man page.</p></div>
+<div class="paragraph"><p>See the <a href="../config/ini-config.html#sub:ini:sec:hal">INI HAL Section</a> of the documentation for more
+information on adding a HAL file.
+Jog management pins are provided for each joint and all coordinate
+letters.  This example uses the axis jog pins for jogging in world
+mode.  Machines with non-identity kinematics may need use additional
+connections for jogging in joint mode.</p></div>
+<div class="listingblock">
+<div class="title">jog.hal</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.9
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-style: italic"><span style="color: #9A1900"># Jog Pendant</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">loadrt</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder</span></span> <span style="font-weight: bold"><span style="color: #000000">num_chan</span></span><span style="color: #990000">=</span><span style="color: #993399">1</span>
+<span style="font-weight: bold"><span style="color: #0000FF">loadrt</span></span> <span style="font-weight: bold"><span style="color: #000000">mux4</span></span> <span style="font-weight: bold"><span style="color: #000000">count</span></span><span style="color: #990000">=</span><span style="color: #993399">1</span>
+<span style="font-weight: bold"><span style="color: #0000FF">addf</span></span> <span style="color: #009900">encoder.capture-position</span> <span style="font-weight: bold"><span style="color: #000000">servo-thread</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">addf</span></span> <span style="color: #009900">encoder.update-counters</span> <span style="font-weight: bold"><span style="color: #000000">base-thread</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">addf</span></span> <span style="color: #009900">mux4.0</span> <span style="font-weight: bold"><span style="color: #000000">servo-thread</span></span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># If your MPG outputs a quadrature signal per click set x4 to 1</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># If your MPG puts out 1 pulse per click set x4 to 0</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">encoder.0.x4-mode</span> <span style="color: #993399">0</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># For velocity mode, set to 1</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># In velocity mode the axis stops when the dial is stopped</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># even if that means the commanded motion is not completed,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># For position mode (the default), set to 0</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># In position mode the axis will move exactly jog-scale</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># units for each count, regardless of how long that might take,</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">axis.x.jog-vel-mode</span> <span style="color: #993399">0</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">axis.y.jog-vel-mode</span> <span style="color: #993399">0</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">axis.z.jog-vel-mode</span> <span style="color: #993399">0</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># This sets the scale that will be used based on the input to the mux4</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">mux4.0.in0</span> <span style="color: #993399">0.1</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">mux4.0.in1</span> <span style="color: #993399">0.01</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">mux4.0.in2</span> <span style="color: #993399">0.001</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The inputs to the mux4 component</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">scale1</span></span> <span style="color: #009900">mux4.0.sel0</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-09-in</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">scale2</span></span> <span style="color: #009900">mux4.0.sel1</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-10-in</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The output from the mux4 is sent to each axis jog scale</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-scale</span></span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">mux4.0.out</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-scale</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.x.jog-scale</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-scale</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.y.jog-scale</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-scale</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.z.jog-scale</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The MPG inputs</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-a</span></span> <span style="color: #009900">encoder.0.phase-A</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-02-in</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-b</span></span> <span style="color: #009900">encoder.0.phase-B</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-03-in</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The Axis select inputs</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-x</span></span> <span style="color: #009900">axis.x.jog-enable</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-04-in</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-y</span></span> <span style="color: #009900">axis.y.jog-enable</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-05-in</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-z</span></span> <span style="color: #009900">axis.z.jog-enable</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-06-in</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The encoder output counts to the axis. Only the selected axis will move.</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder-counts</span></span>  <span style="color: #990000">&lt;=</span> <span style="color: #009900">encoder.0.counts</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder-counts</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.x.jog-counts</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder-counts</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.y.jog-counts</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder-counts</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.z.jog-counts</span></tt></pre></div></div>
+<div class="paragraph"><p>If the machine is capable of high acceleration to smooth out the moves
+for each click of the MPG use the <a href="../man/man9/ilowpass.9.html">ilowpass</a> component to
+limit the acceleration.</p></div>
+<div class="listingblock">
+<div class="title">jog.hal with ilowpass</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.9
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">loadrt</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder</span></span> <span style="font-weight: bold"><span style="color: #000000">num_chan</span></span><span style="color: #990000">=</span><span style="color: #993399">1</span>
+<span style="font-weight: bold"><span style="color: #0000FF">loadrt</span></span> <span style="font-weight: bold"><span style="color: #000000">mux4</span></span> <span style="font-weight: bold"><span style="color: #000000">count</span></span><span style="color: #990000">=</span><span style="color: #993399">1</span>
+<span style="font-weight: bold"><span style="color: #0000FF">addf</span></span> <span style="color: #009900">encoder.capture-position</span> <span style="font-weight: bold"><span style="color: #000000">servo-thread</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">addf</span></span> <span style="color: #009900">encoder.update-counters</span> <span style="font-weight: bold"><span style="color: #000000">base-thread</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">addf</span></span> <span style="color: #009900">mux4.0</span> <span style="font-weight: bold"><span style="color: #000000">servo-thread</span></span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">loadrt</span></span> <span style="font-weight: bold"><span style="color: #000000">ilowpass</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">addf</span></span> <span style="color: #009900">ilowpass.0</span> <span style="font-weight: bold"><span style="color: #000000">servo-thread</span></span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">ilowpass.0.scale</span> <span style="color: #993399">1000</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">ilowpass.0.gain</span> <span style="color: #993399">0.01</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># If your MPG outputs a quadrature signal per click set x4 to 1</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># If your MPG puts out 1 pulse per click set x4 to 0</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">encoder.0.x4-mode</span> <span style="color: #993399">0</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># For velocity mode, set to 1</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># In velocity mode the axis stops when the dial is stopped</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># even if that means the commanded motion is not completed,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># For position mode (the default), set to 0</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># In position mode the axis will move exactly jog-scale</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># units for each count, regardless of how long that might take,</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">axis.x.jog-vel-mode</span> <span style="color: #993399">0</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">axis.y.jog-vel-mode</span> <span style="color: #993399">0</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">axis.z.jog-vel-mode</span> <span style="color: #993399">0</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># This sets the scale that will be used based on the input to the mux4</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># The scale used here has to be multiplied by the ilowpass scale</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">mux4.0.in0</span> <span style="color: #993399">0.0001</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">mux4.0.in1</span> <span style="color: #993399">0.00001</span>
+<span style="font-weight: bold"><span style="color: #0000FF">setp</span></span> <span style="color: #009900">mux4.0.in2</span> <span style="color: #993399">0.000001</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The inputs to the mux4 component</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">scale1</span></span> <span style="color: #009900">mux4.0.sel0</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-09-in</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">scale2</span></span> <span style="color: #009900">mux4.0.sel1</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-10-in</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The output from encoder counts is sent to ilowpass</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-out</span></span> <span style="color: #009900">ilowpass.0.in</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">encoder.0.counts</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The output from the mux4 is sent to each axis jog scale</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-scale</span></span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">mux4.0.out</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-scale</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.x.jog-scale</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-scale</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.y.jog-scale</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-scale</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.z.jog-scale</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The MPG inputs</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-a</span></span> <span style="color: #009900">encoder.0.phase-A</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-02-in</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-b</span></span> <span style="color: #009900">encoder.0.phase-B</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-03-in</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The Axis select inputs</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-x</span></span> <span style="color: #009900">axis.x.jog-enable</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-04-in</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-y</span></span> <span style="color: #009900">axis.y.jog-enable</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-05-in</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">mpg-z</span></span> <span style="color: #009900">axis.z.jog-enable</span> <span style="color: #990000">&lt;=</span> <span style="color: #009900">parport.1.pin-06-in</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># The output from the ilowpass is sent to each axis jog count</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># Only the selected axis will move.</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder-counts</span></span>  <span style="color: #990000">&lt;=</span> <span style="color: #009900">ilowpass.0.out</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder-counts</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.x.jog-counts</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder-counts</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.y.jog-counts</span>
+<span style="font-weight: bold"><span style="color: #0000FF">net</span></span> <span style="font-weight: bold"><span style="color: #000000">encoder-counts</span></span> <span style="color: #990000">=&gt;</span> <span style="color: #009900">axis.z.jog-counts</span></tt></pre></div></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated
+ 2024-09-20 13:42:29 MDT
+</div>
+</div>
+</body>
+</html>
