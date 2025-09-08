@@ -282,11 +282,11 @@ setp mux4.0.in2 0.001    # Fine scale
 setp mux4.0.in3 0.0001   # Extra fine scale
 
 # MPG encoder inputs (from TB5)
-net mpg-a encoder.0.phase-A <= hm2_7i76e.0.7i76.0.0.0.input-16  # A+ on INPUT16
-net mpg-b encoder.0.phase-B <= hm2_7i76e.0.7i76.0.0.0.input-17  # B+ on INPUT17
+net mpg-a encoder.0.phase-A <= hm2_7i76e.0.7i76.0.0.input-16  # A+ on INPUT16
+net mpg-b encoder.0.phase-B <= hm2_7i76e.0.7i76.0.0.input-17  # B+ on INPUT17
 
 # Jog enable button (from TB5)
-net mpg-enable-btn <= hm2_7i76e.0.7i76.0.0.0.input-20  # INPUT20
+net mpg-enable-btn <= hm2_7i76e.0.7i76.0.0.input-20  # INPUT20
 
 # Create axis select signals
 setp axis.x.jog-enable 0
