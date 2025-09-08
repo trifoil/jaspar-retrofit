@@ -264,7 +264,7 @@ net tool-prepare-loopback   iocontrol.0.tool-prepare      =>  iocontrol.0.tool-p
 loadrt encoder num_chan=1
 loadrt mux4 count=1
 addf encoder.capture-position servo-thread
-addf encoder.update-counters base-thread
+addf encoder.update-counters servo-thread  # Changed from base-thread to servo-thread
 addf mux4.0 servo-thread
 
 # MPG encoder configuration
@@ -288,16 +288,11 @@ net mpg-b encoder.0.phase-B <= hm2_7i76e.0.7i76.0.0.input-17  # B+ on INPUT17
 # Jog enable button (from TB5)
 net mpg-enable-btn <= hm2_7i76e.0.7i76.0.0.input-20  # INPUT20
 
-# Create axis select signals (you may need to add physical switches for these)
-# For now, we'll create manual selection signals
+# Create axis select signals (you'll need to add physical switches for these)
+# For manual testing, you can set them directly:
 setp axis.x.jog-enable 0
 setp axis.y.jog-enable 0  
 setp axis.z.jog-enable 0
-
-# Or use these if you have physical axis select switches:
-# net x-select axis.x.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx
-# net y-select axis.y.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx
-# net z-select axis.z.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx
 
 # Connect encoder counts to all axes
 net mpg-counts <= encoder.0.counts
@@ -311,17 +306,24 @@ net mpg-scale => axis.x.jog-scale
 net mpg-scale => axis.y.jog-scale
 net mpg-scale => axis.z.jog-scale
 
-# Enable jogging only when the MPG enable button is pressed AND machine is enabled
-net jog-enabled not.in0 <= mpg-enable-btn
-net jog-enabled => axis.x.jog-enable
-net jog-enabled => axis.y.jog-enable
-net jog-enabled => axis.z.jog-enable
+# Enable jogging only when the MPG enable button is pressed
+# Using NOT component since button is likely active low (pressed = 0, released = 1)
+loadrt not count=1
+addf not.0 servo-thread
+net mpg-enable-active not.0.in <= mpg-enable-btn
+net mpg-enable-active => axis.x.jog-enable
+net mpg-enable-active => axis.y.jog-enable
+net mpg-enable-active => axis.z.jog-enable
 
-# Add scale selection if you have scale select switches
-# For example, if you have 2 switches for 4 scales:
+# Manual scale selection (set default scale)
+setp mux4.0.sel0 0
+setp mux4.0.sel1 0
+
+# Example: If you add scale select switches later:
 # net scale-sel0 mux4.0.sel0 <= hm2_7i76e.0.7i76.0.0.input-xx
 # net scale-sel1 mux4.0.sel1 <= hm2_7i76e.0.7i76.0.0.input-xx
 
-# Manual scale selection (comment out if using physical switches)
-setp mux4.0.sel0 0
-setp mux4.0.sel1 0
+# Example: If you add axis select switches later:
+# net x-select axis.x.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx
+# net y-select axis.y.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx  
+# net z-select axis.z.jog-enable <= hm2_7i76e.0.7i76.0.0.input-xx
