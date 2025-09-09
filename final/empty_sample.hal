@@ -238,29 +238,31 @@ net machine-is-enabled        <=  motion.motion-enabled
 # Load the required components
 loadrt toggle2nist
 loadrt timedelay
+loadrt oneshot
 
 # Add functions to threads
 addf toggle2nist.0 servo-thread
 addf timedelay.0 servo-thread
+addf oneshot.0 servo-thread
 
-# Configure timedelay for the desired delay (adjust on-delay as needed)
-setp timedelay.0.on-delay 2.0  # 2 second delay, adjust to your needs
-setp timedelay.0.off-delay 0.0  # No off-delay needed for this application
+# Configure components
+setp timedelay.0.on-delay 2.0
+setp timedelay.0.off-delay 0.0
+setp oneshot.0.width 0.1  # Short pulse
 
-# Connect iocontrol.0.user-enable-out to timedelay input
-net user-enable iocontrol.0.user-enable-out => timedelay.0.in
+# Detect estop clearance edge
+net estop-cleared <= not iocontrol.0.user-enable-out
+net estop-cleared => oneshot.0.in
+net estop-pulse oneshot.0.out => timedelay.0.in
 
-# Connect timedelay output to toggle2nist input
-net delayed-enable timedelay.0.out => toggle2nist.0.in
-
-# Use the existing machine-is-on signal instead of creating a new connection
+# Use existing machine status
 net machine-is-on => toggle2nist.0.is-on
 
-# Connect toggle2nist on output to halui.machine.on
-net machine-on-toggle toggle2nist.0.on => halui.machine.on
+# Connect delayed pulse to toggle
+net delayed-pulse timedelay.0.out => toggle2nist.0.in
 
-# Optional: Connect toggle2nist off output if needed
-net machine-off-toggle toggle2nist.0.off => halui.machine.off
+# Connect toggle output
+net machine-on-toggle toggle2nist.0.on => halui.machine.on
 
 
 
