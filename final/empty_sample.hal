@@ -252,7 +252,7 @@ net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
 net estop-in    =>  iocontrol.0.emc-enable-in
 
 # Invert estop (we want "is-on" true when estop is released)
-addf not.0 servo-thread
+
 net estop-in    => not.0.in
 net estop-clear <= not.0.out
 
