@@ -239,12 +239,23 @@ net machine-is-enabled        <=  motion.motion-enabled
 # --- Physical E-stop on INPUT27 ---
 # Normally open: 0 = OK, 1 = E-stop pressed
 
+
+# Adding the not to the servo thread
 addf not.0 servo-thread
 
-net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
+# Physical estop input
+net estop-physical <= hm2_7i76e.0.7i76.0.0.input-27
 
-net estop-in    =>  not.0.in
-net estop-inverted not.0.out => iocontrol.0.emc-enable-in
+# Connect to both software estop and inverter
+net estop-physical => iocontrol.0.emc-enable-in
+net estop-physical => not.0.in
+
+# Inverted signal turns machine on
+net not.0.out => halui.machine.on
+
+# Ensure machine off signal is always disabled
+setp halui.machine.off 0
+
 
 #  ---manual tool change signals---
 
