@@ -241,19 +241,25 @@ net machine-is-enabled        <=  motion.motion-enabled
 
 
 # Adding the not to the servo thread
+loadrt edge count=1
+addf edge.0 servo-thread
 addf not.0 servo-thread
 
-# Hardware estop input
-net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
-net estop-in    =>  iocontrol.0.emc-enable-in
+# Detect estop cleared (input goes false -> not.0.out goes true)
+net estop-in      <=  hm2_7i76e.0.7i76.0.0.input-27
+net estop-in      =>  iocontrol.0.emc-enable-in
+net estop-in      =>  not.0.in
 
-# Invert estop for machine-on
-net estop-in    =>  not.0.in
-net machine-on  <=  not.0.out
-net machine-on  =>  halui.machine.on
+# Feed inverted estop into edge detector
+net estop-clear   <=  not.0.out
+net estop-clear   =>  edge.0.in
 
-# Direct estop signal to machine-off
-net estop-in    =>  halui.machine.off
+# Use the edge pulse to press "machine on"
+net machine-on-pulse <= edge.0.rising
+net machine-on-pulse => halui.machine.on
+
+# Still force machine-off when estop is pressed
+net estop-in => halui.machine.off
 
 
 #  ---manual tool change signals---
