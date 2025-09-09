@@ -234,11 +234,6 @@ net machine-is-enabled        <=  motion.motion-enabled
 
 #  ---digital in / out signals---
 
-#  ---estop signals---
-
-# --- Physical E-stop on INPUT27 ---
-# Normally open: 0 = OK, 1 = E-stop pressed
-
 
 # Load the required components
 loadrt toggle2nist
@@ -258,16 +253,14 @@ net user-enable iocontrol.0.user-enable-out => timedelay.0.in
 # Connect timedelay output to toggle2nist input
 net delayed-enable timedelay.0.out => toggle2nist.0.in
 
-# Connect halui.machine.is-on to toggle2nist is-on input
-net machine-status halui.machine.is-on => toggle2nist.0.is-on
+# Use the existing machine-is-on signal instead of creating a new connection
+net machine-is-on => toggle2nist.0.is-on
 
 # Connect toggle2nist on output to halui.machine.on
-net machine-on toggle2nist.0.on => halui.machine.on
+net machine-on-toggle toggle2nist.0.on => halui.machine.on
 
 # Optional: Connect toggle2nist off output if needed
-net machine-off toggle2nist.0.off => halui.machine.off
-
-
+net machine-off-toggle toggle2nist.0.off => halui.machine.off
 
 
 
