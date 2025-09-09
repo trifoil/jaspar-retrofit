@@ -241,30 +241,33 @@ net machine-is-enabled        <=  motion.motion-enabled
 
 
 # Adding the not to the servo thread
-loadrt oneshot count=1
 addf not.0 servo-thread
-addf oneshot.0 servo-thread
 
-# Estop input
+# Load toggle2nist
+loadrt toggle2nist count=1
+addf toggle2nist.0 servo-thread
+
+# Estop input (active-high from hardware)
 net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
 net estop-in    =>  iocontrol.0.emc-enable-in
 
-# Invert estop (so signal goes high when estop is released)
-net estop-in    =>  not.0.in
-net estop-clear <=  not.0.out
+# Invert estop (we want "is-on" true when estop is released)
+addf not.0 servo-thread
+net estop-in    => not.0.in
+net estop-clear <= not.0.out
 
-# Feed estop-clear into oneshot to make a pulse
-net estop-clear => oneshot.0.in
-net machine-on-pulse <= oneshot.0.out
+# Feed the "machine state" and estop clear into toggle2nist
+net estop-clear   => toggle2nist.0.in
+net machine-is-on <= halui.machine.is-on
+net machine-is-on => toggle2nist.0.is-on
 
-# Use the pulse to press "machine on"
-net machine-on-pulse => halui.machine.on
+# Drive halui with the generated pulses
+net auto-on  <= toggle2nist.0.on
+net auto-on  => halui.machine.on
 
-# Still force machine off when estop is pressed
-net estop-in => halui.machine.off
+net auto-off <= toggle2nist.0.off
+net auto-off => halui.machine.off
 
-# Configure the pulse length (e.g. 100ms)
-setp oneshot.0.width 0.1
 
 
 
