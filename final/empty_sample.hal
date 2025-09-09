@@ -243,30 +243,26 @@ net machine-is-enabled        <=  motion.motion-enabled
 # Adding the not to the servo thread
 addf not.0 servo-thread
 
-# Load toggle2nist
-loadrt toggle2nist count=1
-addf toggle2nist.0 servo-thread
+# Load components
+loadrt timedelay count=1
+addf timedelay.0 servo-thread
 
-# Estop input (active-high from hardware)
-net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
-net estop-in    =>  iocontrol.0.emc-enable-in
+# Use GUI "Machine On/Off" button for testing
+net gui-enable <= iocontrol.0.user-enable-out
 
-# Invert estop (we want "is-on" true when estop is released)
+# Invert: true when user requests machine on
+net gui-enable => not.0.in
+net gui-enable-inverted <= not.0.out
 
-net estop-in    => not.0.in
-net estop-clear <= not.0.out
+# Apply a delay after GUI enable
+setp timedelay.0.on-delay 1.0      # wait 1s before asserting machine on
+setp timedelay.0.off-delay 0.0
+net gui-enable-inverted => timedelay.0.in
+net delayed-enable <= timedelay.0.out
 
-# Feed the "machine state" and estop clear into toggle2nist
-net estop-clear   => toggle2nist.0.in
-net machine-is-on <= halui.machine.is-on
-net machine-is-on => toggle2nist.0.is-on
+# Drive halui with the delayed enable
+net delayed-enable => halui.machine.on
 
-# Drive halui with the generated pulses
-net auto-on  <= toggle2nist.0.on
-net auto-on  => halui.machine.on
-
-net auto-off <= toggle2nist.0.off
-net auto-off => halui.machine.off
 
 
 
