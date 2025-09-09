@@ -245,21 +245,22 @@ loadrt edge count=1
 addf edge.0 servo-thread
 addf not.0 servo-thread
 
-# Detect estop cleared (input goes false -> not.0.out goes true)
-net estop-in      <=  hm2_7i76e.0.7i76.0.0.input-27
-net estop-in      =>  iocontrol.0.emc-enable-in
-net estop-in      =>  not.0.in
+# estop input
+net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
+net estop-in    =>  iocontrol.0.emc-enable-in
 
-# Feed inverted estop into edge detector
-net estop-clear   <=  not.0.out
-net estop-clear   =>  edge.0.in
+# invert estop
+net estop-in    =>  not.0.in
+net estop-clear <=  not.0.out
 
-# Use the edge pulse to press "machine on"
-net machine-on-pulse <= edge.0.rising
-net machine-on-pulse => halui.machine.on
+# detect rising edge when estop clears
+net estop-clear => edge.0.in
+net estop-on-pulse <= edge.0.out
+net estop-on-pulse => halui.machine.on
 
-# Still force machine-off when estop is pressed
+# make sure machine goes off when estop pressed
 net estop-in => halui.machine.off
+
 
 
 #  ---manual tool change signals---
