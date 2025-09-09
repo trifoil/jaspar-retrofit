@@ -240,28 +240,32 @@ net machine-is-enabled        <=  motion.motion-enabled
 # Normally open: 0 = OK, 1 = E-stop pressed
 
 
-# Internal estop condition
-setp estop-active-notice 0
-net estop-cond <= iocontrol.0.user-enable-out
-net estop-cond-not <= !estop-cond
+# Load the required components
+loadrt toggle2nist
+loadrt timedelay
 
-loadrt timedelay names=estop-delay
-addf estop-delay.0.update base-thread
-setp estop-delay.0.on-delay 0.5   # 0.5 seconds delay before triggering
-setp estop-delay.0.off-delay 0.1  # short off delay
-net estop-delayed <= estop-delay.0.out
-net estop-delayed estop-delay.0.in => estop-cond-not
+# Add functions to threads
+addf toggle2nist.0 servo-thread
+addf timedelay.0 servo-thread
 
-loadrt toggle2nist names=halui-toggle
-addf halui-toggle.0.update base-thread
+# Configure timedelay for the desired delay (adjust on-delay as needed)
+setp timedelay.0.on-delay 2.0  # 2 second delay, adjust to your needs
+setp timedelay.0.off-delay 0.0  # No off-delay needed for this application
 
-# Connect the delayed estop condition to the toggle input
-net estop-delayed halui-toggle.0.in
-net halui.machine.on halui-toggle.0.on
-net halui-toggle.0.is-on <= halui.machine.on
+# Connect iocontrol.0.user-enable-out to timedelay input
+net user-enable iocontrol.0.user-enable-out => timedelay.0.in
 
+# Connect timedelay output to toggle2nist input
+net delayed-enable timedelay.0.out => toggle2nist.0.in
 
+# Connect halui.machine.is-on to toggle2nist is-on input
+net machine-status halui.machine.is-on => toggle2nist.0.is-on
 
+# Connect toggle2nist on output to halui.machine.on
+net machine-on toggle2nist.0.on => halui.machine.on
+
+# Optional: Connect toggle2nist off output if needed
+net machine-off toggle2nist.0.off => halui.machine.off
 
 
 
