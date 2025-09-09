@@ -241,25 +241,30 @@ net machine-is-enabled        <=  motion.motion-enabled
 
 
 # Adding the not to the servo thread
-loadrt edge count=1
-addf edge.0 servo-thread
+loadrt oneshot count=1
 addf not.0 servo-thread
+addf oneshot.0 servo-thread
 
-# estop input
+# Estop input
 net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
 net estop-in    =>  iocontrol.0.emc-enable-in
 
-# invert estop
+# Invert estop (so signal goes high when estop is released)
 net estop-in    =>  not.0.in
 net estop-clear <=  not.0.out
 
-# detect rising edge when estop clears
-net estop-clear => edge.0.in
-net estop-on-pulse <= edge.0.out
-net estop-on-pulse => halui.machine.on
+# Feed estop-clear into oneshot to make a pulse
+net estop-clear => oneshot.0.in
+net machine-on-pulse <= oneshot.0.out
 
-# make sure machine goes off when estop pressed
+# Use the pulse to press "machine on"
+net machine-on-pulse => halui.machine.on
+
+# Still force machine off when estop is pressed
 net estop-in => halui.machine.off
+
+# Configure the pulse length (e.g. 100ms)
+setp oneshot.0.width 0.1
 
 
 
