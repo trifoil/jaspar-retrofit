@@ -155,8 +155,8 @@ Pins are numbered from bottom up.
 
     | TB3 pin  |  Name   | MPG contact |
     |:---|:-----| :--- |
-    | 9 | GND | VCC |
-    | 12 | +5VP | GND |
+    | 9 | GND | GND |
+    | 12 | +5VP | VCC |
 
     | TB5 pin  |  Name   | MPG contact |
     |:---|:-----| :--- |
