@@ -288,6 +288,11 @@ net estop-in    <=  hm2_7i76e.0.7i76.0.0.input-27
 net estop-in    =>  iocontrol.0.emc-enable-in
 
 
+#  ---z axis brake---
+
+net machine-is-enabled => hm2_7i76e.0.7i76.0.0.output-09
+#motion.motion-enabled
+
 #  ---manual tool change signals---
 
 net tool-change-request    <= iocontrol.0.tool-change
