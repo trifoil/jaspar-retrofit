@@ -339,16 +339,15 @@ net mpg-counts     <= ilowpass.0.out
 # -------------------------
 # Jog enable
 # -------------------------
-net mpg-enable axis.x.jog-enable axis.y.jog-enable axis.z.jog-enable \
-    <= hm2_7i76e.0.7i76.0.0.input20
+net mpg-enable axis.x.jog-enable axis.y.jog-enable axis.z.jog-enable <= hm2_7i76e.0.7i76.0.0.input-20
 
 # -------------------------
 # Axis selection
 # -------------------------
 # Default: Y axis, unless another input is active
 # 00 = Y, 01 = X, 10 = Z
-net axis-sel-a <= hm2_7i76e.0.7i76.0.0.input23
-net axis-sel-b <= hm2_7i76e.0.7i76.0.0.input24
+net axis-sel-a <= hm2_7i76e.0.7i76.0.0.input-23
+net axis-sel-b <= hm2_7i76e.0.7i76.0.0.input-24
 
 # Feed axis selection into mux4.0
 net axis-sel-a mux4.0.sel0
@@ -376,8 +375,8 @@ net mpg-z-enable axis.z.jog-enable <= mux4.0.out2
 # -------------------------
 # Inputs: 21, 22
 # Default: X10 if none selected
-net scale-sel-a <= hm2_7i76e.0.7i76.0.0.input21
-net scale-sel-b <= hm2_7i76e.0.7i76.0.0.input22
+net scale-sel-a <= hm2_7i76e.0.7i76.0.0.input-21
+net scale-sel-b <= hm2_7i76e.0.7i76.0.0.input-22
 
 net scale-sel-a mux4.1.sel0
 net scale-sel-b mux4.1.sel1
