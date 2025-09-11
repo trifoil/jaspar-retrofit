@@ -60,6 +60,13 @@ Two selector buttons allow for selecting :
     * X10
     * X100
 
+The A+ signal is wired to hm2_7i76e.0.7i76.0.0.input16
+The B+ signal is wired to hm2_7i76e.0.7i76.0.0.input17
+
+The card is in mode 2 to enable mpg inputs on these pins (sserial_port_0=20xxxxxx)
+
+That way, the mpg input is readable on hm2_7i76e.0.7i76.0.0.enc0.count
+
 ---
 
 
