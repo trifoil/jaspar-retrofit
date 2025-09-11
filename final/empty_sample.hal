@@ -314,4 +314,56 @@ net tool-prepare-loopback   iocontrol.0.tool-prepare      =>  iocontrol.0.tool-p
 # MPG jog
 #******************************
 
-# 
+# --- Axis select multiplexer ---
+# mux3 takes a 2-bit select input and routes one of 3 signals to the output
+# We'll use: 0=Y, 1=X, 2=Z
+
+loadrt mux3 names=axis_sel_mux
+addf axis_sel_mux servo-thread
+
+# --- Input signals from Mesa ---
+net sel-x hm2_7i76e.0.7i76.0.0.input-23 => axis_sel_mux.sel1
+net sel-z hm2_7i76e.0.7i76.0.0.input-24 => axis_sel_mux.sel0
+
+# --- Mux inputs: X, Y, Z ---
+setp axis_sel_mux.in0 0   # Y axis selected when no inputs
+setp axis_sel_mux.in1 1   # X axis
+setp axis_sel_mux.in2 2   # Z axis
+
+# --- Outputs: drive enable lines based on selection ---
+# compare mux output to constants using "comp"
+loadrt equal count=3 names=eqx,eqy,eqz
+addf eqx servo-thread
+addf eqy servo-thread
+addf eqz servo-thread
+
+# X selected when mux == 1
+setp eqx.in1 1
+net mux-out axis_sel_mux.out => eqx.in0
+
+# Y selected when mux == 0
+setp eqy.in1 0
+net mux-out => eqy.in0
+
+# Z selected when mux == 2
+setp eqz.in1 2
+net mux-out => eqz.in0
+
+# --- Jog enable button ---
+net jog-button hm2_7i76e.0.7i76.0.0.input-25
+
+# --- Combine axis select with jog enable ---
+loadrt and2 count=3 names=andx,andy,andz
+addf andx servo-thread
+addf andy servo-thread
+addf andz servo-thread
+
+net jog-button => andx.in0 andy.in0 andz.in0
+net eqx.out => andx.in1
+net eqy.out => andy.in1
+net eqz.out => andz.in1
+
+# --- Final connections to axis jog-enable ---
+net mpg-x andx.out => axis.x.jog-enable
+net mpg-y andy.out => axis.y.jog-enable
+net mpg-z andz.out => axis.z.jog-enable
