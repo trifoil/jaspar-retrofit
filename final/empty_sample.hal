@@ -314,56 +314,90 @@ net tool-prepare-loopback   iocontrol.0.tool-prepare      =>  iocontrol.0.tool-p
 # MPG jog
 #******************************
 
-# --- Axis select multiplexer ---
-# mux3 takes a 2-bit select input and routes one of 3 signals to the output
-# We'll use: 0=Y, 1=X, 2=Z
+# -------------------------
+# Load required components
+# -------------------------
+loadrt mux4 count=2    # one mux for axis select, one mux for jog scale select
+loadrt ilowpass count=1
+addf mux4.0 servo-thread
+addf mux4.1 servo-thread
+addf ilowpass.0 servo-thread
 
-loadrt mux3 names=axis_sel_mux
-addf axis_sel_mux servo-thread
+# -------------------------
+# Configure ilowpass filter
+# -------------------------
+setp ilowpass.0.scale 1000
+setp ilowpass.0.gain  0.01
 
-# --- Input signals from Mesa ---
-net sel-x hm2_7i76e.0.7i76.0.0.input-23 => axis_sel_mux.sel1
-net sel-z hm2_7i76e.0.7i76.0.0.input-24 => axis_sel_mux.sel0
+# -------------------------
+# Connect MPG encoder input
+# -------------------------
+# A and B signals wired to MPG input, counts read directly
+net mpg-raw-counts ilowpass.0.in  <= hm2_7i76e.0.7i76.0.0.enc0.count
+net mpg-counts     <= ilowpass.0.out
 
-# --- Mux inputs: X, Y, Z ---
-setp axis_sel_mux.in0 0   # Y axis selected when no inputs
-setp axis_sel_mux.in1 1   # X axis
-setp axis_sel_mux.in2 2   # Z axis
+# -------------------------
+# Jog enable
+# -------------------------
+net mpg-enable axis.x.jog-enable axis.y.jog-enable axis.z.jog-enable \
+    <= hm2_7i76e.0.7i76.0.0.input20
 
-# --- Outputs: drive enable lines based on selection ---
-# compare mux output to constants using "comp"
-loadrt equal count=3 names=eqx,eqy,eqz
-addf eqx servo-thread
-addf eqy servo-thread
-addf eqz servo-thread
+# -------------------------
+# Axis selection
+# -------------------------
+# Default: Y axis, unless another input is active
+# 00 = Y, 01 = X, 10 = Z
+net axis-sel-a <= hm2_7i76e.0.7i76.0.0.input23
+net axis-sel-b <= hm2_7i76e.0.7i76.0.0.input24
 
-# X selected when mux == 1
-setp eqx.in1 1
-net mux-out axis_sel_mux.out => eqx.in0
+# Feed axis selection into mux4.0
+net axis-sel-a mux4.0.sel0
+net axis-sel-b mux4.0.sel1
 
-# Y selected when mux == 0
-setp eqy.in1 0
-net mux-out => eqy.in0
+# Mux outputs enable the selected axis
+# Order: in0=X, in1=Y, in2=Z, in3=Y (fallback to Y)
+setp mux4.0.in0 1
+setp mux4.0.in1 1
+setp mux4.0.in2 1
+setp mux4.0.in3 1
 
-# Z selected when mux == 2
-setp eqz.in1 2
-net mux-out => eqz.in0
+# Route mux outputs to jog-enable gating
+net mux-axis-x mux4.0.out0
+net mux-axis-y mux4.0.out1
+net mux-axis-z mux4.0.out2
 
-# --- Jog enable button ---
-net jog-button hm2_7i76e.0.7i76.0.0.input-25
+# Combine jog-enable with selection
+net mpg-x-enable axis.x.jog-enable <= mux4.0.out0
+net mpg-y-enable axis.y.jog-enable <= mux4.0.out1
+net mpg-z-enable axis.z.jog-enable <= mux4.0.out2
 
-# --- Combine axis select with jog enable ---
-loadrt and2 count=3 names=andx,andy,andz
-addf andx servo-thread
-addf andy servo-thread
-addf andz servo-thread
+# -------------------------
+# Jog scale (X1, X10, X100)
+# -------------------------
+# Inputs: 21, 22
+# Default: X10 if none selected
+net scale-sel-a <= hm2_7i76e.0.7i76.0.0.input21
+net scale-sel-b <= hm2_7i76e.0.7i76.0.0.input22
 
-net jog-button => andx.in0 andy.in0 andz.in0
-net eqx.out => andx.in1
-net eqy.out => andy.in1
-net eqz.out => andz.in1
+net scale-sel-a mux4.1.sel0
+net scale-sel-b mux4.1.sel1
 
-# --- Final connections to axis jog-enable ---
-net mpg-x andx.out => axis.x.jog-enable
-net mpg-y andy.out => axis.y.jog-enable
-net mpg-z andz.out => axis.z.jog-enable
+# Scale factors (multiplied by ilowpass scale)
+# X1 = fine, X10 = default, X100 = coarse
+setp mux4.1.in0 0.0001     # X1
+setp mux4.1.in1 0.0010     # X10 (default)
+setp mux4.1.in2 0.0100     # X100
+setp mux4.1.in3 0.0010     # fallback to X10
+
+# Connect mux scale output to jog scale
+net mpg-scale <= mux4.1.out
+net mpg-scale => axis.x.jog-scale
+net mpg-scale => axis.y.jog-scale
+net mpg-scale => axis.z.jog-scale
+
+# -------------------------
+# Connect counts to jog
+# -------------------------
+net mpg-counts => axis.x.jog-counts
+net mpg-counts => axis.y.jog-counts
+net mpg-counts => axis.z.jog-counts
