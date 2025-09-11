@@ -236,3 +236,16 @@ Pins are numbered from bottom up.
     |:---|:-----|
     | 18 | OUTPUT9 |
 
+## Important notes 
+
+In order to select the mode 2 of the mesa 7i76e board, this line 
+
+```hal
+loadrt hm2_eth board_ip="192.168.1.121" config="num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=00xxxxxx" 
+```
+
+has to be changed to this
+
+```hal
+loadrt hm2_eth board_ip="192.168.1.121" config="num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=20xxxxxx" 
+```
