@@ -49,6 +49,8 @@ The MPG encoder is powered by 5V, linked to GND, and has 4 outputs but two are u
 
 To override the normal operation of the machine one button is pressed, and enables the jog wheel while pressed.
 
+The pin to enable jog is hm2_7i76e.0.7i76.0.0.input20
+
 Two selector buttons allow for selecting :
 
 * The axis to move :
@@ -60,12 +62,24 @@ Two selector buttons allow for selecting :
     * X10
     * X100
 
-The A+ signal is wired to hm2_7i76e.0.7i76.0.0.input16
-The B+ signal is wired to hm2_7i76e.0.7i76.0.0.input17
-
 The card is in mode 2 to enable mpg inputs on these pins (sserial_port_0=20xxxxxx)
 
+* The A+ signal is wired to hm2_7i76e.0.7i76.0.0.input16
+* The B+ signal is wired to hm2_7i76e.0.7i76.0.0.input17
+
 That way, the mpg input is readable on hm2_7i76e.0.7i76.0.0.enc0.count
+
+For the axis selection : 
+
+* hm2_7i76e.0.7i76.0.0.input23
+* hm2_7i76e.0.7i76.0.0.input24
+* if none is selected, Y is the axis to be selected
+
+For the speed selection : 
+
+* hm2_7i76e.0.7i76.0.0.input21
+* hm2_7i76e.0.7i76.0.0.input22
+* if none is selected, X10 is the axis to be selected
 
 ---
 
