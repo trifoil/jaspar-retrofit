@@ -270,3 +270,20 @@ has to be changed to this
 ```hal
 loadrt hm2_eth board_ip="192.168.1.121" config="num_encoders=1 num_pwmgens=0 num_stepgens=5 sserial_port_0=20xxxxxx" 
 ```
+
+The pc is connected with : 
+* ip:192.168.1.3 
+* gateway:192.168.1.254 
+* mask: 255.255.255.0
+
+## QTPYVCP interface
+
+```sh
+sudo apt update -y
+sudo apt upgrade -y
+
+sudo apt install curl -y
+echo 'deb [arch=amd64] https://repository.qtpyvcp.com/apt stable main' | sudo tee /etc/apt/sources.list.d/kcjengr.list
+curl -sS https://repository.qtpyvcp.com/repo/kcjengr.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/kcjengr.gpg
+gpg --keyserver keys.openpgp.org --recv-key 2DEC041F290DF85A
+```
