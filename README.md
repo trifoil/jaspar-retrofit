@@ -295,3 +295,8 @@ sudo apt install python3-monokrom -y
 sudo apt install python3-turbonc -y
 
 ```
+
+
+## Sources
+
+https://www.qtpyvcp.com/index.html
