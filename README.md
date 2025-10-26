@@ -300,3 +300,15 @@ sudo apt install python3-turbonc -y
 ## Sources
 
 https://www.qtpyvcp.com/index.html
+
+
+## Notes
+
+I have one homing inductive sensor per axis
+
+I have two limit switches per axis (that trip the physical estop) 
+
+I want my machine to have a homing performed when I switch it on.
+
+Estop off -> machine enabled -> axis moving a bit in the opposite direction of the home -> axis moving back until the home proximity sensor trips -> axis are zeroed
+
